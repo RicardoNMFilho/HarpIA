@@ -1,0 +1,66 @@
+# Android/Java
+.gradle/
+/local.properties
+/.idea/
+.DS_Store
+/build/
+/captures/
+.externalNativeBuild/
+.cxx/
+*.iml
+*.apk
+*.ap_ 
+*.dex
+*.class
+*.jar
+*.war
+*.ear
+*.so
+*.apk
+*.ap_ 
+*.dex
+*.class
+*.jar
+*.war
+*.ear
+*.so
+*.log
+*.hprof
+
+# Android Studio
+.idea/
+*.iws
+*.ipr
+*.iml
+
+# Build output
+app/build/
+*/build/
+
+# APK outputs
+app/build/outputs/
+
+# NDK
+obj/
+
+# Gradle
+.gradle/
+build/
+
+# Local configuration file (sdk path, etc)
+local.properties
+
+# Mac
+.DS_Store
+
+# Windows
+Thumbs.db
+
+# Large native libs
+app/build/intermediates/merged_native_libs/
+
+# Outras libs nativas grandes
+app/build/intermediates/stripped_native_libs/
+
+# Ignore APKs
+*.apk
