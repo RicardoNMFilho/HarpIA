@@ -4,11 +4,18 @@ import org.pytorch.Module
 import org.pytorch.IValue
 import org.pytorch.Tensor
 
-class PyTorchModelRunner : ModelRunner {
+import org.pytorch.Device
+
+class PyTorchModelRunner(private val useVulkan: Boolean = false) : ModelRunner {
     private var module: Module? = null
 
     override fun loadModel(modelPath: String) {
-        module = Module.load(modelPath)
+        // PyTorch Android 2.0.0+ permite seleção explícita do backend
+        module = if (useVulkan) {
+            Module.load(modelPath, emptyMap(), Device.VULKAN)
+        } else {
+            Module.load(modelPath, emptyMap(), Device.CPU)
+        }
     }
 
     override fun runInference(input: FloatArray): FloatArray {

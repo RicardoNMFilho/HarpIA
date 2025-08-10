@@ -35,7 +35,8 @@ object ModelInferenceHelper {
                 runner.runInference(input)
             }
             "PyTorch" -> {
-                val runner = PyTorchModelRunner()
+                val useVulkan = device == "GPU"
+                val runner = PyTorchModelRunner(useVulkan)
                 runner.loadModel(modelPath)
                 runner.runInference(input)
             }

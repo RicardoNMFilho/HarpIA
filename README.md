@@ -37,6 +37,19 @@ HarpIA é uma ferramenta Android para benchmark de modelos de inferência de IA,
 - VS Code (com extensões recomendadas para Android/Kotlin)
 - Dispositivo Android físico
 
+## Novidades (agosto/2025)
+
+- **PyTorch Android atualizado para 2.1.0 (full):**
+   - Suporte explícito a seleção de backend: agora é possível escolher entre CPU e GPU (Vulkan) para inferência PyTorch diretamente na interface do app.
+   - Dependências: `pytorch_android:2.1.0` e `pytorch_android_torchvision:2.1.0`.
+- **Código refatorado para seleção de backend PyTorch:**
+   - O carregamento do modelo PyTorch usa `Module.load(modelPath, emptyMap(), Device.VULKAN)` ou `Device.CPU` conforme seleção do usuário.
+- **Compatibilidade garantida:**
+   - Removidas dependências duplicadas/lite para evitar conflitos de classes.
+   - Build e execução testados com as novas dependências.
+- **Documentação e instruções atualizadas:**
+   - README e tasks VS Code revisados para refletir o novo fluxo e dependências.
+
 ## Estrutura
 - `app/` - Código fonte Android
 - `assets/imagenetv2/` - Imagens para benchmark
