@@ -58,6 +58,17 @@ HarpIA é uma ferramenta Android para benchmark de modelos de inferência de IA,
 
 ## Observações
 - MindSpore pode exigir bibliotecas nativas específicas no APK/dispositivo.
+
+## Changelog
+
+Consulte o arquivo `CHANGELOG.md` para um histórico detalhado das atualizações.
+
+### Últimas melhorias (10/08/2025)
+- Build e instalação do APK via ADB confirmados.
+- Refatoração: separação do pré-processamento de imagem para `ImageUtils.kt`.
+- Benchmark e inferência exibem média, desvio padrão e intervalo de confiança para tempo e energia.
+- Amostragem periódica de energia implementada para inferência única.
+- Código pronto para novas refatorações e melhorias.
 - Logs detalhados são exibidos via logcat para facilitar depuração.
 - O projeto é compatível com Android Studio, mas otimizado para uso no VS Code.
 

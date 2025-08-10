@@ -163,7 +163,7 @@ class MainActivity : AppCompatActivity() {
                 energyMonitor.start()
                 var lastEnergy = energyMonitor.getPartialEnergy()
                 for ((idx, fileName) in imageFiles.withIndex()) {
-                    val input = loadAndPreprocessImageFromAssets("imagenetv2/$fileName")
+                    val input = com.example.harpia.util.ImageUtils.loadAndPreprocessImage(assets, "imagenetv2/$fileName")
                     val start = System.nanoTime()
                     try {
                         ModelInferenceHelper.runInference(
@@ -213,24 +213,7 @@ class MainActivity : AppCompatActivity() {
         }.start()
     }
 
-    // Função utilitária para carregar e preprocessar imagem do assets
-    private fun loadAndPreprocessImageFromAssets(assetPath: String): FloatArray {
-        val inputStream = assets.open(assetPath)
-        val bitmap = BitmapFactory.decodeStream(inputStream)
-        inputStream.close()
-        val resized = Bitmap.createScaledBitmap(bitmap, 224, 224, true)
-        val floatValues = FloatArray(1 * 224 * 224 * 3)
-        var idx = 0
-        for (y in 0 until 224) {
-            for (x in 0 until 224) {
-                val pixel = resized.getPixel(x, y)
-                floatValues[idx++] = ((pixel shr 16) and 0xFF) / 255.0f // R
-                floatValues[idx++] = ((pixel shr 8) and 0xFF) / 255.0f  // G
-                floatValues[idx++] = (pixel and 0xFF) / 255.0f          // B
-            }
-        }
-        return floatValues
-    }
+    // ... Função utilitária movida para ImageUtils.kt ...
 
     // Copia o arquivo selecionado para um arquivo temporário e retorna o caminho
     private fun copyUriToTempFile(uri: Uri): String? {
