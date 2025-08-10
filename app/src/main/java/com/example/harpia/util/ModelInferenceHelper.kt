@@ -7,6 +7,11 @@ import com.example.harpia.ml.PyTorchModelRunner
 import com.example.harpia.ml.MindSporeModelRunner
 
 object ModelInferenceHelper {
+    // Cache de runners para evitar recriação a cada inferência
+    private var tfliteRunner: TFLiteModelRunner? = null
+    private var tfliteDevice: TFLiteDevice? = null
+    private var tfliteModelPath: String? = null
+
     fun runInference(
         context: Context,
         modelType: String,
@@ -16,23 +21,36 @@ object ModelInferenceHelper {
     ): FloatArray {
         return when (modelType) {
             "TFLite" -> {
-                val runner = TFLiteModelRunner(
-                    context,
-                    if (device == "GPU") TFLiteDevice.GPU else TFLiteDevice.CPU
-                )
-                try {
-                    runner.loadModel(modelPath)
-                } catch (e: Exception) {
-                    android.util.Log.e("TFLiteModelRunner", "Erro ao inicializar delegate GPU", e)
-                    val msg = "Falha ao inicializar na GPU. O modelo foi carregado na CPU.\n" +
-                        "Tipo: ${e::class.java.simpleName}\nMotivo: ${e.message}"
-                    android.widget.Toast.makeText(
-                        context,
-                        msg,
-                        android.widget.Toast.LENGTH_LONG
-                    ).show()
+                val desiredDevice = if (device == "GPU") TFLiteDevice.GPU else TFLiteDevice.CPU
+
+                // Reusar runner se config/modelo não mudou
+                val needsNewRunner = tfliteRunner == null ||
+                    tfliteDevice != desiredDevice ||
+                    tfliteModelPath != modelPath
+
+                if (needsNewRunner) {
+                    // Fecha runner anterior, se houver
+                    tfliteRunner?.close()
+
+                    val newRunner = TFLiteModelRunner(context, desiredDevice)
+                    try {
+                        newRunner.loadModel(modelPath)
+                    } catch (e: Exception) {
+                        android.util.Log.e("TFLiteModelRunner", "Erro ao inicializar delegate GPU", e)
+                        val msg = "Falha ao inicializar na GPU. O modelo foi carregado na CPU.\n" +
+                            "Tipo: ${e::class.java.simpleName}\nMotivo: ${e.message}"
+                        android.widget.Toast.makeText(
+                            context,
+                            msg,
+                            android.widget.Toast.LENGTH_LONG
+                        ).show()
+                    }
+                    tfliteRunner = newRunner
+                    tfliteDevice = desiredDevice
+                    tfliteModelPath = modelPath
                 }
-                runner.runInference(input)
+
+                tfliteRunner!!.runInference(input)
             }
             "PyTorch" -> {
                 val useVulkan = device == "GPU"

@@ -2,6 +2,7 @@ package com.example.harpia.ml
 
 
 import org.tensorflow.lite.Interpreter
+import org.tensorflow.lite.gpu.GpuDelegate
 import android.content.Context
 import java.io.File
 import java.nio.MappedByteBuffer
@@ -13,17 +14,50 @@ class TFLiteModelRunner(
     private val device: TFLiteDevice = TFLiteDevice.CPU
 ) : ModelRunner {
     private var interpreter: Interpreter? = null
+    private var gpuDelegate: GpuDelegate? = null
+    private var loadedModelPath: String? = null
 
     fun close() {
         interpreter?.close()
         interpreter = null
+        gpuDelegate?.close()
+        gpuDelegate = null
+        loadedModelPath = null
     }
 
     override fun loadModel(modelPath: String) {
+        // Evita recriar se já carregado com o mesmo modelo
+        if (interpreter != null && loadedModelPath == modelPath) {
+            android.util.Log.d("TFLiteModelRunner", "Reusando intérprete já inicializado para ${device} com modelo: ${modelPath}")
+            return
+        }
+
+        // Se já houver um intérprete com outro modelo, feche antes
+        if (interpreter != null && loadedModelPath != modelPath) {
+            close()
+        }
+
         val modelBuffer = loadModelFile(modelPath)
         val options = Interpreter.Options()
-        // LiteRT não expõe delegate GPU diretamente, apenas CPU por enquanto
+
+        if (device == TFLiteDevice.GPU) {
+            try {
+                if (gpuDelegate == null) {
+                    gpuDelegate = GpuDelegate()
+                }
+                options.addDelegate(gpuDelegate)
+            } catch (e: Exception) {
+                // Fallback para CPU se delegate falhar
+                android.util.Log.e("TFLiteModelRunner", "Erro ao inicializar delegate GPU", e)
+            }
+        }
+
         interpreter = Interpreter(modelBuffer, options)
+        android.util.Log.d(
+            "TFLiteModelRunner",
+            "Intérprete criado (${device}). Delegate GPU: ${gpuDelegate != null} | Modelo: ${modelPath}"
+        )
+        loadedModelPath = modelPath
     }
 
     override fun runInference(input: FloatArray): FloatArray {
