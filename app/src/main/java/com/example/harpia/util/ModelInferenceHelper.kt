@@ -12,6 +12,10 @@ object ModelInferenceHelper {
     private var tfliteDevice: TFLiteDevice? = null
     private var tfliteModelPath: String? = null
 
+    private var pytorchRunner: PyTorchModelRunner? = null
+    private var pytorchUseVulkan: Boolean? = null
+    private var pytorchModelPath: String? = null
+
     fun runInference(
         context: Context,
         modelType: String,
@@ -54,9 +58,48 @@ object ModelInferenceHelper {
             }
             "PyTorch" -> {
                 val useVulkan = device == "GPU"
-                val runner = PyTorchModelRunner(useVulkan)
-                runner.loadModel(modelPath)
-                runner.runInference(input)
+
+                val needsNewRunner = pytorchRunner == null ||
+                    pytorchUseVulkan != useVulkan ||
+                    pytorchModelPath != modelPath
+
+                if (needsNewRunner) {
+                    // Fecha runner anterior (garbage collect), se houver
+                    pytorchRunner?.close()
+
+                    // Cria novo runner e tenta carregar com backend solicitado
+                    var actualUseVulkan = useVulkan
+                    var newRunner = PyTorchModelRunner(actualUseVulkan)
+                    try {
+                        newRunner.loadModel(modelPath)
+                    } catch (e: Exception) {
+                        android.util.Log.e("PyTorchModelRunner", "Erro ao carregar modelo", e)
+                        val msg = "Falha ao carregar PyTorch (${if (actualUseVulkan) "VULKAN" else "CPU"}).\n" +
+                            "Tipo: ${e::class.java.simpleName}\nMotivo: ${e.message}"
+                        android.widget.Toast.makeText(
+                            context,
+                            msg,
+                            android.widget.Toast.LENGTH_LONG
+                        ).show()
+                        // Tentar fallback para CPU se falhou em Vulkan
+                        if (actualUseVulkan) {
+                            actualUseVulkan = false
+                            newRunner = PyTorchModelRunner(false)
+                            newRunner.loadModel(modelPath)
+                        } else {
+                            throw e
+                        }
+                    }
+                    // Atribui sempre o novo runner e flags
+                    pytorchRunner = newRunner
+                    pytorchUseVulkan = actualUseVulkan
+                    pytorchModelPath = modelPath
+                }
+                // Garante que o modelo esteja carregado se runner existir mas não tiver módulo (edge case)
+                if (pytorchRunner != null && !pytorchRunner!!.isLoaded()) pytorchRunner!!.loadModel(modelPath)
+
+
+                pytorchRunner!!.runInference(input)
             }
             "MindSpore" -> {
                 val runner = MindSporeModelRunner(context)

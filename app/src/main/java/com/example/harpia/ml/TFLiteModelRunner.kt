@@ -28,7 +28,6 @@ class TFLiteModelRunner(
     override fun loadModel(modelPath: String) {
         // Evita recriar se já carregado com o mesmo modelo
         if (interpreter != null && loadedModelPath == modelPath) {
-            android.util.Log.d("TFLiteModelRunner", "Reusando intérprete já inicializado para ${device} com modelo: ${modelPath}")
             return
         }
 
@@ -52,11 +51,7 @@ class TFLiteModelRunner(
             }
         }
 
-        interpreter = Interpreter(modelBuffer, options)
-        android.util.Log.d(
-            "TFLiteModelRunner",
-            "Intérprete criado (${device}). Delegate GPU: ${gpuDelegate != null} | Modelo: ${modelPath}"
-        )
+    interpreter = Interpreter(modelBuffer, options)
         loadedModelPath = modelPath
     }
 
