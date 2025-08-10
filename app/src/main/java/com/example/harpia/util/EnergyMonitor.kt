@@ -8,6 +8,19 @@ import android.os.BatteryManager
 import android.os.SystemClock
 
 class EnergyMonitor(private val context: Context) {
+    // Retorna energia acumulada até o momento (em Joules)
+    fun getPartialEnergy(): Double {
+        var energy = 0.0
+        for (i in 1 until samples.size) {
+            val (v, c, t) = samples[i]
+            val (vPrev, cPrev, tPrev) = samples[i - 1]
+            val dt = (t - tPrev) / 1000.0
+            val vAvg = (v + vPrev) / 2.0
+            val cAvg = (c + cPrev) / 2.0
+            energy += vAvg * cAvg * dt
+        }
+        return energy
+    }
     data class Sample(val voltage: Double, val current: Double, val time: Long)
     private val samples = mutableListOf<Sample>()
     @Volatile private var collecting = false
