@@ -114,7 +114,9 @@ class MainActivity : AppCompatActivity() {
         Thread {
             try {
                 val assetManager = assets
-                val imageFiles = assetManager.list("imagenetv2")?.filter { it.endsWith(".JPEG") || it.endsWith(".jpg") || it.endsWith(".png") } ?: emptyList()
+                val imageFiles = assetManager.list("imagenetv2")?.filter { 
+                    it.endsWith(".JPEG") || it.endsWith(".jpeg") || it.endsWith(".jpg") || it.endsWith(".png")
+                } ?: emptyList()
                 if (imageFiles.isEmpty()) {
                     runOnUiThread { findViewById<android.widget.TextView>(R.id.textViewInferenceResult).text = "Nenhuma imagem encontrada em assets/imagenetv2." }
                     return@Thread
@@ -161,7 +163,7 @@ class MainActivity : AppCompatActivity() {
                 runOnUiThread {
                     findViewById<android.widget.TextView>(R.id.textViewInferenceResult).text = "Benchmark concluído! Imagens: $n"
                     findViewById<android.widget.TextView>(R.id.textViewInferenceTime).text = "Tempo médio: %.2f ms".format(avgTime)
-                    findViewById<android.widget.TextView>(R.id.textViewEnergy).text = "Energia média: %.6f mWh".format(avgEnergy / 3.6)
+                    findViewById<android.widget.TextView>(R.id.textViewEnergy).text = "Energia média: %.6f Joules".format(avgEnergy)
                 }
             } catch (e: Exception) {
                 runOnUiThread {
