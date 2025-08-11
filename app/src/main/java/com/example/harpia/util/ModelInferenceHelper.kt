@@ -5,6 +5,7 @@ import com.example.harpia.ml.TFLiteModelRunner
 import com.example.harpia.ml.TFLiteDevice
 import com.example.harpia.ml.PyTorchModelRunner
 import com.example.harpia.ml.MindSporeModelRunner
+import com.example.harpia.ml.MindSporeDevice
 
 object ModelInferenceHelper {
     // Cache de runners para evitar recriação a cada inferência
@@ -15,6 +16,10 @@ object ModelInferenceHelper {
     private var pytorchRunner: PyTorchModelRunner? = null
     private var pytorchUseVulkan: Boolean? = null
     private var pytorchModelPath: String? = null
+
+    private var mindsporeRunner: MindSporeModelRunner? = null
+    private var mindsporeDevice: MindSporeDevice? = null
+    private var mindsporeModelPath: String? = null
 
     fun runInference(
         context: Context,
@@ -102,9 +107,35 @@ object ModelInferenceHelper {
                 pytorchRunner!!.runInference(input)
             }
             "MindSpore" -> {
-                val runner = MindSporeModelRunner(context)
-                runner.loadModel(modelPath)
-                runner.runInference(input)
+                val desired = if (device == "GPU") MindSporeDevice.GPU else MindSporeDevice.CPU
+                val needsNew = mindsporeRunner == null || mindsporeDevice != desired || mindsporeModelPath != modelPath
+                if (needsNew) {
+                    mindsporeRunner?.close()
+                    val runner = MindSporeModelRunner(desired)
+                    try {
+                        runner.loadModel(modelPath)
+                    } catch (e: Exception) {
+                        android.util.Log.e("MindSporeModelRunner", "Erro ao carregar modelo", e)
+                        val msg = "Falha ao carregar MindSpore (${desired}).\n" +
+                            "Tipo: ${e::class.java.simpleName}\nMotivo: ${e.message}"
+                        android.widget.Toast.makeText(context, msg, android.widget.Toast.LENGTH_LONG).show()
+                        if (desired == MindSporeDevice.GPU) {
+                            val cpuRunner = MindSporeModelRunner(MindSporeDevice.CPU)
+                            cpuRunner.loadModel(modelPath)
+                            mindsporeRunner = cpuRunner
+                            mindsporeDevice = MindSporeDevice.CPU
+                            mindsporeModelPath = modelPath
+                        } else {
+                            throw e
+                        }
+                    }
+                    if (mindsporeRunner == null) {
+                        mindsporeRunner = runner
+                        mindsporeDevice = desired
+                        mindsporeModelPath = modelPath
+                    }
+                }
+                mindsporeRunner!!.runInference(input)
             }
             else -> floatArrayOf()
         }

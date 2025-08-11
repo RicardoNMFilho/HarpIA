@@ -32,6 +32,9 @@ android {
             dirs 'libs'
         }
     }
+    packagingOptions {
+        doNotStrip "**/*.so"
+    }
 }
 
 dependencies {
@@ -48,5 +51,6 @@ dependencies {
     implementation 'org.tensorflow:tensorflow-lite-gpu-api:2.14.0' // fornece GpuDelegateFactory$Options
     implementation 'org.tensorflow:tensorflow-lite-gpu:2.14.0'     // fornece libs nativas GPU
     implementation 'org.tensorflow:tensorflow-lite-support:0.4.4'
-    implementation(name: 'mindspore-lite-full-2.6.0', ext: 'aar')
+    // MindSpore Lite 1.9 (AAR local extraído em app/libs)
+    implementation(name: 'mindspore-lite-full-1.9.0', ext: 'aar')
 }
