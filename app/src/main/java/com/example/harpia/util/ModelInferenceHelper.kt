@@ -30,7 +30,11 @@ object ModelInferenceHelper {
     ): FloatArray {
         return when (modelType) {
             "TFLite" -> {
-                val desiredDevice = if (device == "GPU") TFLiteDevice.GPU else TFLiteDevice.CPU
+                val desiredDevice = when (device) {
+                    "GPU" -> TFLiteDevice.GPU
+                    "NNAPI" -> TFLiteDevice.NNAPI
+                    else -> TFLiteDevice.CPU
+                }
 
                 // Reusar runner se config/modelo não mudou
                 val needsNewRunner = tfliteRunner == null ||
@@ -45,8 +49,8 @@ object ModelInferenceHelper {
                     try {
                         newRunner.loadModel(modelPath)
                     } catch (e: Exception) {
-                        android.util.Log.e("TFLiteModelRunner", "Erro ao inicializar delegate GPU", e)
-                        val msg = "Falha ao inicializar na GPU. O modelo foi carregado na CPU.\n" +
+                        android.util.Log.e("TFLiteModelRunner", "Erro ao inicializar delegate", e)
+                        val msg = "Falha ao inicializar no dispositivo escolhido. O modelo foi carregado na CPU.\n" +
                             "Tipo: ${e::class.java.simpleName}\nMotivo: ${e.message}"
                         android.widget.Toast.makeText(
                             context,

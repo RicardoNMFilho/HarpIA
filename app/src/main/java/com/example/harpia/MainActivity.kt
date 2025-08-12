@@ -34,6 +34,7 @@ class MainActivity : AppCompatActivity() {
             val selectedDevice = when (deviceGroup.checkedRadioButtonId) {
                 R.id.radioCPU -> "CPU"
                 R.id.radioGPU -> "GPU"
+                R.id.radioNNAPI -> "NNAPI"
                 else -> "Unknown"
             }
             val modelPath = copyUriToTempFile(uri) ?: run {
@@ -137,6 +138,7 @@ class MainActivity : AppCompatActivity() {
         val selectedDevice = when (deviceGroup.checkedRadioButtonId) {
             R.id.radioCPU -> "CPU"
             R.id.radioGPU -> "GPU"
+            R.id.radioNNAPI -> "NNAPI"
             else -> "Unknown"
         }
     findViewById<android.widget.TextView>(R.id.textViewInferenceResult).text = "Iniciando benchmark..."

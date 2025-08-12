@@ -49,6 +49,12 @@ class TFLiteModelRunner(
                 // Fallback para CPU se delegate falhar
                 android.util.Log.e("TFLiteModelRunner", "Erro ao inicializar delegate GPU", e)
             }
+        } else if (device == TFLiteDevice.NNAPI) {
+            try {
+                options.setUseNNAPI(true)
+            } catch (e: Exception) {
+                android.util.Log.e("TFLiteModelRunner", "Erro ao habilitar NNAPI, caindo para CPU", e)
+            }
         }
 
     interpreter = Interpreter(modelBuffer, options)
