@@ -5,6 +5,3 @@
 -keep class org.tensorflow.lite.gpu.** { *; }
 -dontwarn org.tensorflow.lite.**
  
- # MindSpore Lite 1.9 - keep Java API and JNI loaders
- -keep class com.mindspore.** { *; }
- -dontwarn com.mindspore.**

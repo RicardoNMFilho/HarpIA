@@ -1,28 +1,25 @@
 
 # HarpIA: Benchmark de Modelos de IA em Android
 
-HarpIA é um app Android para benchmark de modelos de inferência com TensorFlow Lite, PyTorch e MindSpore Lite 1.9, medindo tempo, consumo de energia e dispositivo de execução (CPU/GPU).
+HarpIA é um app Android para benchmark de modelos de inferência com TensorFlow Lite e PyTorch, medindo tempo, consumo de energia e dispositivo de execução (CPU/GPU/NNAPI).
 
 ## Recursos atuais
 - Backends suportados:
-   - TensorFlow Lite: CPU e GPU (delegate) com reuso de Interpreter/Delegate entre inferências.
+   - TensorFlow Lite: CPU, GPU (delegate) e NNAPI, com reuso de Interpreter/Delegate entre inferências.
    - PyTorch Android 2.1.0: CPU e GPU (Vulkan) com fallback automático para CPU se Vulkan falhar.
-   - MindSpore Lite 1.9.0: CPU e GPU (quando disponível) via AAR local; fallback para CPU.
 - Cache e reuso dos runners por framework/dispositivo/modelo para evitar reconstrução de grafo e retransferência para GPU a cada chamada.
 - Benchmark com imagens reais do ImageNet-V2 em assets.
 - Medição de desempenho: tempo (ms) e energia (J) com amostragem periódica e estatísticas (média, desvio padrão, IC 95%).
-- Seleção na UI do framework (TFLite/PyTorch/MindSpore) e do dispositivo (CPU/GPU).
+- Seleção na UI do framework (TFLite/PyTorch) e do dispositivo (CPU/GPU/NNAPI).
 - Tasks de VS Code para compilar, instalar, iniciar o app e seguir logs via ADB.
 
 ## Estado atual por backend
-- TensorFlow Lite: OK em CPU e GPU (deps gpu-api + gpu adicionadas, regras ProGuard configuradas).
+- TensorFlow Lite: OK em CPU e GPU (deps gpu-api + gpu adicionadas), e NNAPI habilitado; regras ProGuard configuradas.
 - PyTorch: OK em CPU e GPU (Vulkan). Se o dispositivo não suportar Vulkan, cai para CPU.
-- MindSpore: Integrado com API 1.9.0 (Model), usando CPU por padrão e GPU quando suportado.
 
 ## Requisitos
 - Android SDK e ADB; JDK 17; Kotlin 1.9.
 - Dispositivo físico Android (armeabi-v7a ou arm64-v8a). Para PyTorch/Vulkan, exija suporte a Vulkan.
-   Para MindSpore/GPU, suporte do dispositivo pode variar; se não suportado, cai para CPU.
 - VS Code (opcional) para usar as tasks integradas.
 
 ## Como usar
@@ -34,7 +31,7 @@ HarpIA é um app Android para benchmark de modelos de inferência com TensorFlow
       - ADB: startApp
       - ADB: logcat (app)
 4) No app:
-   - Escolha Framework (TFLite, PyTorch, MindSpore) e Dispositivo (CPU/GPU).
+   - Escolha Framework (TFLite, PyTorch) e Dispositivo (CPU/GPU/NNAPI).
       - Carregue um arquivo de modelo pelo botão “Carregar modelo”.
       - Execute uma inferência única ou “Benchmark” (usa assets/imagenetv2).
 
@@ -53,7 +50,6 @@ Nota: modelos com dimensões/normalização diferentes podem requerer ajustes de
 - Principais libs:
    - org.tensorflow:tensorflow-lite:2.14.0, tensorflow-lite-gpu-api:2.14.0, tensorflow-lite-gpu:2.14.0, tensorflow-lite-support:0.4.4.
    - org.pytorch:pytorch_android:2.1.0, pytorch_android_torchvision:2.1.0.
-   - mindspore-lite-full-1.9.0.aar (local em app/libs via flatDir).
 - Gradle/Empacotamento:
    - NDK abiFilters: arm64-v8a e armeabi-v7a.
    - Regras ProGuard para manter classes TFLite e GPU delegate.
@@ -71,7 +67,7 @@ Nota: modelos com dimensões/normalização diferentes podem requerer ajustes de
 
 ## Changelog resumido
 Consulte `CHANGELOG.md` para detalhes. Destaques recentes (11/08/2025):
-- TFLite GPU corrigido (deps + ProGuard) e reuso de Interpreter/Delegate.
+- TFLite GPU corrigido (deps + ProGuard), NNAPI adicionado, e reuso de Interpreter/Delegate.
 - PyTorch com seleção CPU/Vulkan e fallback automático para CPU.
 - Cache de runners por framework/dispositivo/modelo para evitar reconstruções.
 - Tasks de VS Code adicionadas; README atualizado.

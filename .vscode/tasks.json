@@ -1,40 +1,46 @@
 {
-    "version": "2.0.0",
-    "tasks": [
-        {
-            "label": "Gradle: assembleDebug",
-            "type": "shell",
-            "command": "./gradlew.bat assembleDebug",
-            "group": "build",
-            "problemMatcher": []
-        },
-        {
-            "label": "Gradle: clean",
-            "type": "shell",
-            "command": "./gradlew.bat clean",
-            "group": "build",
-            "problemMatcher": []
-        },
-        {
-            "label": "ADB: installDebug",
-            "type": "shell",
-            "command": "adb install -r app/build/outputs/apk/debug/app-debug.apk",
-            "group": "test",
-            "problemMatcher": []
-        },
-        {
-            "label": "ADB: startApp",
-            "type": "shell",
-            "command": "adb shell am start -n com.example.harpia/.MainActivity",
-            "group": "test",
-            "problemMatcher": []
-        },
-        {
-            "label": "ADB: logcat (app)",
-            "type": "shell",
-            "command": "adb logcat | findstr /i \"com.example.harpia\"",
-            "group": "test",
-            "problemMatcher": []
-        }
-    ]
+	"version": "2.0.0",
+	"tasks": [
+		{
+			"label": "Gradle: assembleDebug",
+			"type": "shell",
+			"command": "./gradlew.bat assembleDebug",
+			"group": "build",
+			"problemMatcher": []
+		},
+		{
+			"label": "Gradle: clean",
+			"type": "shell",
+			"command": "./gradlew.bat clean",
+			"group": "build",
+			"problemMatcher": []
+		},
+		{
+			"label": "ADB: installDebug",
+			"type": "shell",
+			"command": "adb install -r app/build/outputs/apk/debug/app-debug.apk",
+			"group": "test",
+			"problemMatcher": []
+		},
+		{
+			"label": "ADB: startApp",
+			"type": "shell",
+			"command": "adb shell am start -n com.example.harpia/.MainActivity",
+			"group": "test",
+			"problemMatcher": []
+		},
+		{
+			"label": "ADB: logcat (app)",
+			"type": "shell",
+			"command": "adb logcat | findstr /i \"com.example.harpia\"",
+			"group": "test",
+			"problemMatcher": []
+		},
+		{
+			"label": "Gradle: clean",
+			"type": "shell",
+			"command": "./gradlew.bat clean",
+			"group": "build"
+		}
+	]
 }

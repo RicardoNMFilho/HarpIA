@@ -42,11 +42,6 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="TFLite"/>
-        <RadioButton
-            android:id="@+id/radioMindSpore"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="MindSpore"/>
     </RadioGroup>
 
     <RadioGroup
@@ -88,6 +83,29 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"/>
 
+    <Button
+        android:id="@+id/btnPickImageDir"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Selecionar diretório de imagens"
+        android:backgroundTint="#5E35B1"
+        android:textColor="#FFF"
+        android:layout_marginTop="8dp"
+        app:layout_constraintTop_toBottomOf="@id/btnLoadModel"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"/>
+
+    <Button
+        android:id="@+id/btnPickImages"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Selecionar imagens (arquivos)"
+        android:backgroundTint="#00897B"
+        android:textColor="#FFF"
+        android:layout_marginTop="8dp"
+        app:layout_constraintTop_toBottomOf="@id/btnPickImageDir"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"/>
 
 
     <androidx.cardview.widget.CardView
@@ -99,7 +117,7 @@
         android:layout_marginTop="24dp"
         android:layout_marginStart="24dp"
         android:layout_marginEnd="24dp"
-        app:layout_constraintTop_toBottomOf="@id/btnLoadModel"
+    app:layout_constraintTop_toBottomOf="@id/btnPickImages"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent">
 
@@ -153,6 +171,27 @@
                 android:textSize="16sp"
                 android:textColor="#222"
                 android:layout_marginTop="4dp"/>
+
+            <ProgressBar
+                android:id="@+id/progressBar"
+                style="?android:attr/progressBarStyleHorizontal"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="12dp"
+                android:indeterminate="false"
+                android:max="100"
+                android:progress="0"
+                android:visibility="gone"/>
+
+            <TextView
+                android:id="@+id/textViewProgress"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Progresso: --/-- (0%)"
+                android:textSize="14sp"
+                android:textColor="#555"
+                android:layout_marginTop="6dp"
+                android:visibility="gone"/>
         </LinearLayout>
     </androidx.cardview.widget.CardView>
 
@@ -169,5 +208,18 @@
         app:layout_constraintTop_toBottomOf="@id/cardViewResults"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"/>
+
+    <Button
+        android:id="@+id/btnCancelBenchmark"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Cancelar benchmark"
+        android:backgroundTint="#D32F2F"
+        android:textColor="#FFF"
+        android:layout_marginTop="8dp"
+        app:layout_constraintTop_toBottomOf="@id/btnBenchmark"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:visibility="gone"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
